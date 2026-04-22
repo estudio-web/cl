@@ -2,273 +2,819 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>Admin Catálogo</title>
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
+  :root {
+    --yellow:    #ffe600;
+    --yellow-dk: #e6cf00;
+    --blue:      #3483fa;
+    --blue-dk:   #2968c8;
+    --green:     #00a650;
+    --green-dk:  #007a3d;
+    --red:       #e83030;
+    --red-dk:    #b71c1c;
+    --text:      #333;
+    --sub:       #666;
+    --border:    #e0e0e0;
+    --bg:        #ededed;
+    --white:     #fff;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.12), 0 1px 6px rgba(0,0,0,.08);
+    --shadow-md: 0 4px 16px rgba(0,0,0,.14);
+    --radius:    6px;
+    --radius-lg: 14px;
+  }
 
-body{
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  background: linear-gradient(100deg, rgb(237, 132, 4),rgb(139, 10, 10),rgb(202, 185, 31));
-  color:#1f2937;
-  background-repeat: no-repeat;
-background-size: cover;
-min-height: 100vh;
-}
+  body {
+    font-family: 'Nunito', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
 
-.header{
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  background:#fff;
-  padding:14px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  box-shadow:0 6px 20px rgba(0,0,0,.08);
-  z-index:10;
-}
+  /* ══ HEADER ══ */
+  .header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: var(--yellow);
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 100;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+  }
 
-.header h1{
-  font-size:1.2rem;
-}
+  .header-brand {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .header-brand span { font-size: 1.3rem; }
 
-.container{
-  padding:80px 14px 20px;
-  max-width:900px;
-  margin:auto;
-}
+  .btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,0,0,.1);
+    border: none;
+    border-radius: var(--radius);
+    padding: 7px 12px;
+    font-family: inherit;
+    font-size: .82rem;
+    font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-logout:hover { background: rgba(0,0,0,.18); }
+  .btn-logout svg { width: 16px; height: 16px; }
 
-.search{
-  width:100%;
-  padding:12px;
-  border-radius:12px;
-  border:1px solid #ddd;
-  margin-bottom:12px;
-}
+  /* ══ MAIN ══ */
+  .main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 72px 12px 96px;
+  }
 
-.product-list{
-  display:grid;
-  gap:10px;
-}
+  /* ══ SEARCH BAR ══ */
+  .search-wrap {
+    position: relative;
+    margin-bottom: 16px;
+  }
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px; height: 18px;
+    fill: #999;
+    pointer-events: none;
+  }
+  .search-input {
+    width: 100%;
+    padding: 12px 16px 12px 40px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: .95rem;
+    background: var(--white);
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .search-input:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(52,131,250,.15);
+  }
 
-.item{
-  display:flex;
-  gap:10px;
-  background:#fff;
-  padding:10px;
-  border-radius:14px;
-  align-items:center;
-}
+  /* ══ STATS BAR ══ */
+  .stats-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .stat-pill {
+    background: var(--white);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: .82rem;
+    font-weight: 700;
+    color: var(--sub);
+    box-shadow: var(--shadow-sm);
+  }
+  .stat-pill strong { color: var(--text); }
 
-.item img{
-  width:60px;
-  height:60px;
-  border-radius:10px;
-  object-fit:cover;
-  background:#eee;
-}
+  /* ══ PRODUCT LIST ══ */
+  .product-list { display: grid; gap: 8px; }
 
-.item-info{
-  flex:1;
-}
+  .item {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid transparent;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .item:hover {
+    border-color: var(--blue);
+    box-shadow: var(--shadow-md);
+  }
 
-.item-title{
-  font-weight:700;
-  font-size:.95rem;
-}
-
-.item-price{
-  font-size:.85rem;
-  color:#555;
-}
-
-.item-actions{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-
-.item-actions button{
-  padding:6px 10px;
-  font-size:.8rem;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-.edit{background:#2563eb;color:#fff}
-.delete{background:#dc2626;color:#fff}
-
-/* BOTON FLOTANTE */
-.fab{
-  position:fixed;
-  bottom:20px;
-  right:20px;
-  width:60px;
-  height:60px;
-  border-radius:50%;
-  background:#16a34a;
-  color:#fff;
-  font-size:28px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border:none;
-  box-shadow:0 10px 25px rgba(0,0,0,.25);
-  cursor:pointer;
-}
-
-/* MODAL */
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.5);
-  display:none;
-  align-items:flex-end;
-  z-index:20;
-}
-
-.modal.show{
-  display:flex;
-}
-
-.modal-box{
-  background:#fff;
-  width:100%;
-  max-height:90vh;
-  border-radius:20px 20px 0 0;
-  padding:16px;
-  overflow:auto;
-}
-
-.field{
-  margin-bottom:10px;
-}
-
-.field input,
-.field textarea{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid #ddd;
-}
-
-textarea{
-  min-height:80px;
-}
-
-.img-preview{
-  width:100%;
-  height:180px;
-  background:#eee;
-  border-radius:12px;
-  margin-bottom:10px;
-  object-fit:cover;
-}
-
-.btn{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:12px;
-  margin-top:6px;
-  font-weight:700;
-  cursor:pointer;
-}
-
-.save{background:#000000;border: 1px solid rgb(221, 197, 11);color:#fff}
-.delete-btn{background:#dc2626;color:#fff}
-.upload{background:#16a34a;color:#fff}
-.cancel{background:#e5e7eb}
-
-.logout{
-  background:#111827;
-  color:#fff;
-  padding:8px 12px;
-  border:none;
-  border-radius:10px;
-}
-
-/* LOGIN */
-#loginBox{
-  max-width:350px;
-  text-align: center;
-  color: #ffffff;
-  margin:80px auto;
-  background:#000000;
-  padding:20px;
-  border-radius:16px;
-  box-shadow: 0 1px 13px rgb(0, 0, 0);
-}
-
-.lab{
-    margin: 6px;
-    padding: 10px;
-    width: auto;
-    min-width: 300px;
+  .item-thumb {
+    width: 64px;
+    height: 64px;
     border-radius: 10px;
-    border-color: #f2f2f2;
-}
+    object-fit: cover;
+    background: var(--bg);
+    flex-shrink: 0;
+  }
 
+  .item-info { flex: 1; min-width: 0; }
+
+  .item-title {
+    font-weight: 800;
+    font-size: .92rem;
+    overflow-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 3px;
+  }
+  .item-price {
+    font-size: .85rem;
+    color: var(--sub);
+    font-weight: 600;
+  }
+  .item-badge {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: .7rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #e6f9ef;
+    color: var(--green);
+  }
+
+  .item-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .btn-edit, .btn-del {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 12px;
+    border: none;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: .78rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: opacity .15s, transform .1s;
+  }
+  .btn-edit:active, .btn-del:active { transform: scale(.95); }
+  .btn-edit { background: var(--blue);  color: #fff; }
+  .btn-edit:hover { background: var(--blue-dk); }
+  .btn-del  { background: #fef2f2; color: var(--red); border: 1px solid #fecaca; }
+  .btn-del:hover  { background: #fee2e2; }
+  .btn-edit svg, .btn-del svg { width: 13px; height: 13px; fill: currentColor; flex-shrink: 0; }
+
+  /* ══ EMPTY ══ */
+  .empty {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--sub);
+    box-shadow: var(--shadow-sm);
+  }
+  .empty-icon { font-size: 2.8rem; margin-bottom: 10px; }
+
+  /* ══ FAB ══ */
+  .fab {
+    position: fixed;
+    bottom: 24px;
+    right: 20px;
+    width: 58px; height: 58px;
+    border-radius: 50%;
+    background: var(--green);
+    color: #fff;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    box-shadow: 0 6px 20px rgba(0,166,80,.45);
+    cursor: pointer;
+    transition: background .15s, transform .15s, box-shadow .15s;
+    z-index: 90;
+  }
+  .fab:hover { background: var(--green-dk); transform: scale(1.06); }
+  .fab:active { transform: scale(.94); }
+
+  /* ══ MODAL ══ */
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    backdrop-filter: blur(3px);
+    display: none;
+    align-items: flex-end;
+    z-index: 200;
+    overscroll-behavior: contain;
+  }
+  .modal.open { display: flex; }
+
+  @keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .modal.open .modal-box { animation: slideUp .26s cubic-bezier(.32,.72,0,1); }
+
+  .modal-box {
+    background: var(--white);
+    width: 100%;
+    max-height: 92vh;
+    border-radius: 20px 20px 0 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0 0 24px;
+  }
+
+  .modal-handle {
+    width: 36px; height: 4px;
+    background: #ddd;
+    border-radius: 2px;
+    margin: 12px auto 0;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4px;
+  }
+  .modal-title {
+    font-size: 1rem;
+    font-weight: 900;
+  }
+  .btn-modal-close {
+    width: 32px; height: 32px;
+    border: none;
+    border-radius: 50%;
+    background: var(--bg);
+    color: var(--sub);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s;
+  }
+  .btn-modal-close:hover { background: #ddd; }
+
+  /* Previa imagen */
+  .img-preview-wrap {
+    margin: 10px 16px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--bg);
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed var(--border);
+    transition: border-color .15s;
+  }
+  .img-preview-wrap.has-img { border-style: solid; border-color: var(--border); }
+  .img-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+  }
+  .img-preview.visible { display: block; }
+  .img-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: #aaa;
+    font-size: .8rem;
+    font-weight: 700;
+    pointer-events: none;
+  }
+  .img-placeholder svg { width: 32px; height: 32px; fill: #ccc; }
+
+  /* Campos */
+  .fields { padding: 0 16px; }
+
+  .field { margin-bottom: 12px; }
+  .field label {
+    display: block;
+    font-size: .78rem;
+    font-weight: 800;
+    color: var(--sub);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+  }
+  .field input,
+  .field textarea {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: .95rem;
+    color: var(--text);
+    background: #fafafa;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .field input:focus,
+  .field textarea:focus {
+    border-color: var(--blue);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(52,131,250,.15);
+  }
+  .field textarea { min-height: 76px; resize: vertical; }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  /* Upload section */
+  .upload-section {
+    padding: 0 16px;
+    margin-bottom: 12px;
+  }
+  .upload-label {
+    font-size: .78rem;
+    font-weight: 800;
+    color: var(--sub);
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .upload-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .file-input-wrap {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  .file-input-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 13px;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    font-size: .85rem;
+    font-weight: 700;
+    color: var(--sub);
+    background: #fafafa;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .file-input-label:hover { border-color: var(--blue); background: #f0f5ff; color: var(--blue); }
+  .file-input-label svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
+  #imageFile { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+  .btn-upload {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: .85rem;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .15s, transform .1s;
+    flex-shrink: 0;
+  }
+  .btn-upload:hover { background: var(--blue-dk); }
+  .btn-upload:active { transform: scale(.96); }
+  .btn-upload svg { width: 14px; height: 14px; fill: #fff; }
+
+  /* Upload progress */
+  .upload-status {
+    font-size: .78rem;
+    color: var(--sub);
+    margin-top: 6px;
+    min-height: 18px;
+    font-weight: 600;
+  }
+  .upload-status.ok   { color: var(--green); }
+  .upload-status.err  { color: var(--red);   }
+
+  /* Divider */
+  .divider {
+    margin: 4px 16px 12px;
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Modal actions */
+  .modal-actions {
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-save {
+    width: 100%;
+    padding: 14px;
+    background: #000;
+    color: var(--yellow);
+    border: none;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: .97rem;
+    font-weight: 900;
+    cursor: pointer;
+    transition: background .15s, transform .1s;
+    letter-spacing: .2px;
+  }
+  .btn-save:hover   { background: #222; }
+  .btn-save:active  { transform: scale(.97); }
+
+  .btn-delete-modal {
+    width: 100%;
+    padding: 13px;
+    background: #fef2f2;
+    color: var(--red);
+    border: 1px solid #fecaca;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: .9rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background .15s;
+    display: none;
+  }
+  .btn-delete-modal:hover { background: #fee2e2; }
+
+  .btn-cancel-modal {
+    width: 100%;
+    padding: 12px;
+    background: var(--bg);
+    color: var(--sub);
+    border: none;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: .88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-cancel-modal:hover { background: #ddd; }
+
+  /* ══ LOGIN ══ */
+  .login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--yellow);
+    padding: 16px;
+  }
+
+  .login-card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 32px 28px 28px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.18);
+    text-align: center;
+  }
+
+  .login-logo {
+    font-size: 2.5rem;
+    margin-bottom: 6px;
+  }
+
+  .login-card h2 {
+    font-size: 1.25rem;
+    font-weight: 900;
+    margin-bottom: 4px;
+  }
+  .login-card p {
+    font-size: .85rem;
+    color: var(--sub);
+    margin-bottom: 24px;
+  }
+
+  .login-field {
+    margin-bottom: 12px;
+    text-align: left;
+  }
+  .login-field label {
+    display: block;
+    font-size: .78rem;
+    font-weight: 800;
+    color: var(--sub);
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    margin-bottom: 5px;
+  }
+  .login-field input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: .95rem;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .login-field input:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(52,131,250,.15);
+  }
+
+  .btn-login {
+    width: 100%;
+    padding: 14px;
+    background: var(--yellow);
+    color: var(--text);
+    border: none;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 900;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background .15s, transform .1s;
+    letter-spacing: .2px;
+  }
+  .btn-login:hover  { background: var(--yellow-dk); }
+  .btn-login:active { transform: scale(.97); }
+
+  .login-status {
+    margin-top: 10px;
+    font-size: .85rem;
+    color: var(--red);
+    font-weight: 700;
+    min-height: 20px;
+  }
+
+  /* Confirm dialog */
+  .confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    backdrop-filter: blur(3px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 300;
+    padding: 20px;
+  }
+  .confirm-overlay.open { display: flex; }
+  .confirm-box {
+    background: var(--white);
+    border-radius: 18px;
+    padding: 24px 20px 20px;
+    width: 100%;
+    max-width: 340px;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+  }
+  .confirm-icon { font-size: 2.4rem; margin-bottom: 8px; }
+  .confirm-box h3 { font-size: 1rem; font-weight: 900; margin-bottom: 6px; }
+  .confirm-box p  { font-size: .85rem; color: var(--sub); margin-bottom: 18px; }
+  .confirm-btns   { display: flex; gap: 10px; }
+  .confirm-cancel {
+    flex: 1; padding: 12px;
+    background: var(--bg); border: none;
+    border-radius: var(--radius);
+    font-family: inherit; font-weight: 700; cursor: pointer;
+    transition: background .15s;
+  }
+  .confirm-cancel:hover { background: #ddd; }
+  .confirm-ok {
+    flex: 1; padding: 12px;
+    background: var(--red); color: #fff; border: none;
+    border-radius: var(--radius);
+    font-family: inherit; font-weight: 800; cursor: pointer;
+    transition: background .15s;
+  }
+  .confirm-ok:hover { background: var(--red-dk); }
+
+  /* Skeleton */
+  .skeleton-item {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--shadow-sm);
+  }
+  .sk { background: linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%); background-size:200% 100%; animation:shimmer 1.2s infinite; border-radius:6px; }
+  .sk-thumb { width:64px; height:64px; border-radius:10px; flex-shrink:0; }
+  .sk-lines { flex:1; display:flex; flex-direction:column; gap:8px; }
+  .sk-line { height:12px; }
+  .sk-line.w60 { width:60%; }
+  .sk-line.w40 { width:40%; }
+  @keyframes shimmer { to { background-position:-200% 0; } }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
 </style>
 </head>
-
 <body>
-    <div id="loginBox">
-  <h3>Ingreso admin</h3>
-  <input class="lab" id="loginEmail" placeholder="Email">
-  <input class="lab" id="loginPassword" type="password" placeholder="Contraseña">
-  <button id="loginBtn" class="btn save">Ingresar</button>
-  <div id="loginStatus"></div>
+
+<!-- ══ LOGIN ══ -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">🛍️</div>
+    <h2>NV-STORE</h2>
+    <p>Ingresá para administrar tus productos</p>
+
+    <div class="login-field">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="admin@ejemplo.com" autocomplete="username" />
+    </div>
+    <div class="login-field">
+      <label>Contraseña</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+
+    <button class="btn-login" id="loginBtn">Ingresar</button>
+    <div class="login-status" id="loginStatus"></div>
+  </div>
 </div>
 
-<div id="adminApp" style="display:none;">
+<!-- ══ ADMIN APP ══ -->
+<div id="adminApp" style="display:none">
 
-<div class="header">
-  <h1>Productos</h1>
-  <button id="logoutBtn" class="logout">Salir</button>
-</div>
+  <header class="header">
+    <div class="header-brand">
+      <span>🛍️</span> Admin Catálogo
+    </div>
+    <button class="btn-logout" id="logoutBtn">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+      Salir
+    </button>
+  </header>
 
-<div class="container">
-  <input id="searchInput" class="search" placeholder="Buscar...">
-  <div id="productList" class="product-list"></div>
-</div>
-
-<button class="fab" id="addBtn">+</button>
-
-<div class="modal" id="modal">
-  <div class="modal-box">
-
-    <img id="preview" class="img-preview" src="">
-
-    <div class="field">
-      <input id="title" placeholder="Título">
+  <main class="main">
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24"><path d="M10 2a8 8 0 105.293 14.121l4.293 4.293 1.414-1.414-4.293-4.293A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4z"/></svg>
+      <input type="text" id="searchInput" class="search-input" placeholder="Buscar producto..." autocomplete="off" />
     </div>
 
-    <div class="field">
-      <input id="price" placeholder="Precio">
+    <div class="stats-bar" id="statsBar"></div>
+
+    <div id="productList" class="product-list">
+      <!-- skeletons -->
+      ${Array(4).fill(`
+      <div class="skeleton-item">
+        <div class="sk sk-thumb"></div>
+        <div class="sk-lines">
+          <div class="sk sk-line w60"></div>
+          <div class="sk sk-line w40"></div>
+        </div>
+      </div>`).join('')}
     </div>
+  </main>
 
-    <div class="field">
-      <textarea id="description" placeholder="Descripción"></textarea>
+  <button class="fab" id="addBtn" title="Agregar producto">+</button>
+
+  <!-- ══ MODAL FORM ══ -->
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitleText">Nuevo producto</div>
+        <button class="btn-modal-close" id="cancelBtn">✕</button>
+      </div>
+
+      <!-- Preview -->
+      <div class="img-preview-wrap" id="previewWrap">
+        <img id="preview" class="img-preview" src="" alt="Preview" />
+        <div class="img-placeholder" id="imgPlaceholder">
+          <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+          Sin imagen
+        </div>
+      </div>
+
+      <div class="fields">
+        <div class="field">
+          <label>Título del producto</label>
+          <input id="titleInput" placeholder="Ej: Remera básica negra" />
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Precio</label>
+            <input id="priceInput" placeholder="Ej: $1.500" />
+          </div>
+          <div class="field" style="display:flex;flex-direction:column;justify-content:flex-end">
+            <!-- espacio -->
+          </div>
+        </div>
+        <div class="field">
+          <label>Descripción</label>
+          <textarea id="descInput" placeholder="Describí el producto brevemente..."></textarea>
+        </div>
+        <div class="field">
+          <label>URL de imagen</label>
+          <input id="imageUrlInput" placeholder="https://..." />
+        </div>
+      </div>
+
+      <div class="upload-section">
+        <span class="upload-label">O subí una imagen</span>
+        <div class="upload-row">
+          <div class="file-input-wrap">
+            <label class="file-input-label" id="fileLabel">
+              <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
+              <span id="fileName">Elegir archivo</span>
+            </label>
+            <input type="file" id="imageFile" accept="image/*" />
+          </div>
+          <button class="btn-upload" id="uploadBtn">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            Subir
+          </button>
+        </div>
+        <div class="upload-status" id="uploadStatus"></div>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="modal-actions">
+        <button class="btn-save" id="saveBtn">Guardar producto</button>
+        <button class="btn-delete-modal" id="deleteBtn">🗑 Eliminar producto</button>
+        <button class="btn-cancel-modal" id="cancelBtn2">Cancelar</button>
+      </div>
     </div>
+  </div>
 
-    <div class="field">
-      <input id="imageUrl" placeholder="URL imagen">
+</div><!-- /adminApp -->
+
+<!-- ══ CONFIRM DIALOG ══ -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon">🗑️</div>
+    <h3 id="confirmTitle">¿Eliminar producto?</h3>
+    <p id="confirmText">Esta acción no se puede deshacer.</p>
+    <div class="confirm-btns">
+      <button class="confirm-cancel" id="confirmCancel">Cancelar</button>
+      <button class="confirm-ok"     id="confirmOk">Eliminar</button>
     </div>
-
-    <div class="field">
-      <input type="file" id="imageFile">
-    </div>
-
-    <button id="uploadBtn" class="btn upload">Subir imagen</button>
-    <button id="saveBtn" class="btn save">Guardar</button>
-    <button id="deleteBtn" class="btn delete-btn" style="display:none;">Eliminar</button>
-    <button id="cancelBtn" class="btn cancel">Cancelar</button>
-
   </div>
 </div>
 
@@ -278,143 +824,328 @@ import {
   getFirestore, collection, addDoc, doc,
   updateDoc, deleteDoc, onSnapshot, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 import {
   getAuth, signInWithEmailAndPassword,
   onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
 import { firebaseConfig, IMGBB_API_KEY, APP_CONFIG } from "./firebase-config.js";
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+/* ── Init ── */
+const app  = initializeApp(firebaseConfig);
+const db   = getFirestore(app);
 const auth = getAuth(app);
 
-/* LOGIN */
-loginBtn.onclick = async ()=>{
-  try{
-    await signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value);
-  }catch{
-    loginStatus.innerText="Error login";
+/* ── DOM ── */
+const loginScreen   = document.getElementById("loginScreen");
+const adminApp      = document.getElementById("adminApp");
+const loginEmail    = document.getElementById("loginEmail");
+const loginPassword = document.getElementById("loginPassword");
+const loginBtn      = document.getElementById("loginBtn");
+const loginStatus   = document.getElementById("loginStatus");
+const logoutBtn     = document.getElementById("logoutBtn");
+
+const searchInput   = document.getElementById("searchInput");
+const statsBar      = document.getElementById("statsBar");
+const productList   = document.getElementById("productList");
+
+const modal         = document.getElementById("modal");
+const modalTitleText= document.getElementById("modalTitleText");
+const addBtn        = document.getElementById("addBtn");
+const cancelBtn     = document.getElementById("cancelBtn");
+const cancelBtn2    = document.getElementById("cancelBtn2");
+
+const preview       = document.getElementById("preview");
+const previewWrap   = document.getElementById("previewWrap");
+const imgPlaceholder= document.getElementById("imgPlaceholder");
+const titleInput    = document.getElementById("titleInput");
+const priceInput    = document.getElementById("priceInput");
+const descInput     = document.getElementById("descInput");
+const imageUrlInput = document.getElementById("imageUrlInput");
+const imageFile     = document.getElementById("imageFile");
+const fileName      = document.getElementById("fileName");
+const uploadBtn     = document.getElementById("uploadBtn");
+const uploadStatus  = document.getElementById("uploadStatus");
+const saveBtn       = document.getElementById("saveBtn");
+const deleteBtn     = document.getElementById("deleteBtn");
+
+const confirmOverlay= document.getElementById("confirmOverlay");
+const confirmCancel = document.getElementById("confirmCancel");
+const confirmOk     = document.getElementById("confirmOk");
+const confirmTitle  = document.getElementById("confirmTitle");
+const confirmText   = document.getElementById("confirmText");
+
+/* ── State ── */
+let products = [];
+let editId   = null;
+let confirmCb= null;
+
+/* ── Login ── */
+loginBtn.onclick = async () => {
+  loginStatus.textContent = "";
+  loginBtn.textContent = "Ingresando…";
+  try {
+    await signInWithEmailAndPassword(auth, loginEmail.value.trim(), loginPassword.value.trim());
+  } catch {
+    loginStatus.textContent = "Email o contraseña incorrectos.";
+    loginBtn.textContent = "Ingresar";
   }
 };
 
-logoutBtn.onclick=()=>signOut(auth);
-
-onAuthStateChanged(auth,(user)=>{
-  loginBox.style.display=user?"none":"block";
-  adminApp.style.display=user?"block":"none";
+loginPassword.addEventListener("keydown", e => {
+  if (e.key === "Enter") loginBtn.click();
 });
 
-/* MODAL */
-const modal=document.getElementById("modal");
-const addBtn=document.getElementById("addBtn");
-const cancelBtn=document.getElementById("cancelBtn");
+logoutBtn.onclick = () => signOut(auth);
 
-addBtn.onclick=()=>{
-  modal.classList.add("show");
-  clearForm();
-};
+onAuthStateChanged(auth, user => {
+  loginScreen.style.display = user ? "none"  : "flex";
+  adminApp.style.display    = user ? "block" : "none";
+  if (user) loginBtn.textContent = "Ingresar";
+});
 
-cancelBtn.onclick=()=>modal.classList.remove("show");
+/* ── Render ── */
+function render() {
+  const q = searchInput.value.toLowerCase().trim();
+  const filtered = products.filter(p =>
+    (p.title || "").toLowerCase().includes(q) ||
+    (p.description || "").toLowerCase().includes(q) ||
+    (p.price || "").toLowerCase().includes(q)
+  );
 
-/* CRUD */
-let products=[];
-let editId=null;
+  const total   = products.length;
+  const visible = filtered.length;
+  statsBar.innerHTML = `
+    <div class="stat-pill"><strong>${total}</strong> total</div>
+    ${q ? `<div class="stat-pill"><strong>${visible}</strong> resultados</div>` : ""}
+  `;
 
-function render(){
-  productList.innerHTML="";
-  products.forEach(p=>{
-    const div=document.createElement("div");
-    div.className="item";
-    div.innerHTML=`
-      <img src="${p.imageUrl||'https://via.placeholder.com/100'}">
+  productList.innerHTML = "";
+
+  if (!filtered.length) {
+    productList.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">🔍</div>
+        <div>No encontramos productos.</div>
+      </div>`;
+    return;
+  }
+
+  filtered.forEach(p => {
+    const el = document.createElement("div");
+    el.className = "item";
+    el.innerHTML = `
+      <img class="item-thumb" src="${esc(p.imageUrl || placeholder(p.title))}"
+           alt="${esc(p.title)}"
+           onerror="this.src='${placeholder(p.title)}'">
       <div class="item-info">
-        <div class="item-title">${p.title}</div>
-        <div class="item-price">${p.price}</div>
+        <div class="item-title">${esc(p.title || "Sin título")}</div>
+        <div class="item-price">${esc(p.price || "")}</div>
+        ${p.active ? '<span class="item-badge">Disponible</span>' : ''}
       </div>
       <div class="item-actions">
-        <button class="edit">Edit</button>
-        <button class="delete">X</button>
+        <button class="btn-edit" data-id="${p.id}">
+          <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          Editar
+        </button>
+        <button class="btn-del" data-id="${p.id}" data-title="${esc(p.title)}">
+          <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+          Eliminar
+        </button>
       </div>
     `;
 
-    div.querySelector(".edit").onclick=()=>{
-      editId=p.id;
-      modal.classList.add("show");
-      title.value=p.title;
-      price.value=p.price;
-      description.value=p.description;
-      imageUrl.value=p.imageUrl;
-      preview.src=p.imageUrl;
-      deleteBtn.style.display="block";
+    el.querySelector(".btn-edit").onclick = () => openEditModal(p);
+    el.querySelector(".btn-del").onclick  = () => {
+      openConfirm(
+        `¿Eliminar "${p.title || 'este producto'}"?`,
+        "Esta acción no se puede deshacer.",
+        async () => {
+          await deleteDoc(doc(db, APP_CONFIG.collectionName, p.id));
+        }
+      );
     };
 
-    div.querySelector(".delete").onclick=async ()=>{
-      await deleteDoc(doc(db,"products",p.id));
-    };
-
-    productList.appendChild(div);
+    productList.appendChild(el);
   });
 }
 
-onSnapshot(collection(db,"products"),snap=>{
-  products=snap.docs.map(d=>({id:d.id,...d.data()}));
+/* ── Firestore ── */
+onSnapshot(collection(db, APP_CONFIG.collectionName), snap => {
+  products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
   render();
 });
 
-/* SAVE */
-saveBtn.onclick=async ()=>{
-  const data={
-    title:title.value,
-    price:price.value,
-    description:description.value,
-    imageUrl:imageUrl.value,
-    active:true,
-    updatedAt:serverTimestamp()
+searchInput.addEventListener("input", render);
+
+/* ── Modal helpers ── */
+function openAddModal() {
+  clearForm();
+  modalTitleText.textContent = "Nuevo producto";
+  deleteBtn.style.display    = "none";
+  saveBtn.textContent        = "Guardar producto";
+  modal.classList.add("open");
+}
+
+function openEditModal(p) {
+  clearForm();
+  editId                     = p.id;
+  modalTitleText.textContent = "Editar producto";
+  deleteBtn.style.display    = "block";
+  saveBtn.textContent        = "Actualizar producto";
+  titleInput.value           = p.title        || "";
+  priceInput.value           = p.price        || "";
+  descInput.value            = p.description  || "";
+  imageUrlInput.value        = p.imageUrl      || "";
+  if (p.imageUrl) setPreview(p.imageUrl);
+  modal.classList.add("open");
+}
+
+function closeModal() {
+  modal.classList.remove("open");
+  clearForm();
+}
+
+function clearForm() {
+  editId = null;
+  titleInput.value = priceInput.value = descInput.value = imageUrlInput.value = "";
+  imageFile.value  = "";
+  fileName.textContent = "Elegir archivo";
+  uploadStatus.textContent = "";
+  uploadStatus.className = "upload-status";
+  clearPreview();
+}
+
+function setPreview(url) {
+  preview.src = url;
+  preview.classList.add("visible");
+  imgPlaceholder.style.display = "none";
+  previewWrap.classList.add("has-img");
+}
+function clearPreview() {
+  preview.src = "";
+  preview.classList.remove("visible");
+  imgPlaceholder.style.display = "flex";
+  previewWrap.classList.remove("has-img");
+}
+
+addBtn.onclick   = openAddModal;
+cancelBtn.onclick  = closeModal;
+cancelBtn2.onclick = closeModal;
+modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
+
+/* Preview desde URL */
+imageUrlInput.addEventListener("input", () => {
+  const url = imageUrlInput.value.trim();
+  if (url) setPreview(url);
+  else clearPreview();
+});
+
+/* Nombre archivo */
+imageFile.addEventListener("change", () => {
+  fileName.textContent = imageFile.files[0]?.name || "Elegir archivo";
+});
+
+/* ── Upload ── */
+uploadBtn.onclick = async () => {
+  const file = imageFile.files[0];
+  if (!file) { uploadStatus.textContent = "Seleccioná una imagen primero."; uploadStatus.className = "upload-status err"; return; }
+
+  uploadBtn.disabled = true;
+  uploadStatus.textContent = "Subiendo…";
+  uploadStatus.className   = "upload-status";
+
+  try {
+    const form = new FormData();
+    form.append("image", file);
+    const res  = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: form });
+    const data = await res.json();
+
+    if (!data.success) throw new Error("imgbb error");
+
+    imageUrlInput.value = data.data.url;
+    setPreview(data.data.url);
+    uploadStatus.textContent = "✓ Imagen subida correctamente";
+    uploadStatus.className   = "upload-status ok";
+  } catch {
+    uploadStatus.textContent = "Error al subir imagen. Revisá la API key.";
+    uploadStatus.className   = "upload-status err";
+  } finally {
+    uploadBtn.disabled = false;
+  }
+};
+
+/* ── Save ── */
+saveBtn.onclick = async () => {
+  const data = {
+    title:       titleInput.value.trim(),
+    price:       priceInput.value.trim(),
+    description: descInput.value.trim(),
+    imageUrl:    imageUrlInput.value.trim(),
+    active:      true,
+    updatedAt:   serverTimestamp()
   };
 
-  if(editId){
-    await updateDoc(doc(db,"products",editId),data);
-  }else{
-    await addDoc(collection(db,"products"),data);
+  if (!data.title || !data.price) {
+    titleInput.style.borderColor = data.title ? "" : "var(--red)";
+    priceInput.style.borderColor = data.price ? "" : "var(--red)";
+    setTimeout(() => {
+      titleInput.style.borderColor = "";
+      priceInput.style.borderColor = "";
+    }, 2000);
+    return;
   }
 
-  modal.classList.remove("show");
-};
+  saveBtn.disabled    = true;
+  saveBtn.textContent = "Guardando…";
 
-deleteBtn.onclick=async ()=>{
-  if(editId){
-    await deleteDoc(doc(db,"products",editId));
-    modal.classList.remove("show");
+  try {
+    if (editId) {
+      await updateDoc(doc(db, APP_CONFIG.collectionName, editId), data);
+    } else {
+      await addDoc(collection(db, APP_CONFIG.collectionName), { ...data, createdAt: serverTimestamp() });
+    }
+    closeModal();
+  } catch (e) {
+    console.error(e);
+    saveBtn.textContent = "Error, intentá de nuevo";
+  } finally {
+    saveBtn.disabled = false;
   }
 };
 
-/* IMG */
-uploadBtn.onclick=async ()=>{
-  const file=imageFile.files[0];
-  const form=new FormData();
-  form.append("image",file);
-
-  const res=await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,{
-    method:"POST",body:form
+/* ── Delete desde modal ── */
+deleteBtn.onclick = () => {
+  if (!editId) return;
+  const id = editId;
+  openConfirm("¿Eliminar este producto?", "Esta acción no se puede deshacer.", async () => {
+    closeModal();
+    await deleteDoc(doc(db, APP_CONFIG.collectionName, id));
   });
-
-  const data=await res.json();
-  imageUrl.value=data.data.url;
-  preview.src=data.data.url;
 };
 
-function clearForm(){
-  editId=null;
-  title.value="";
-  price.value="";
-  description.value="";
-  imageUrl.value="";
-  preview.src="";
-  deleteBtn.style.display="none";
+/* ── Confirm dialog ── */
+function openConfirm(title, text, cb) {
+  confirmTitle.textContent = title;
+  confirmText.textContent  = text;
+  confirmCb = cb;
+  confirmOverlay.classList.add("open");
+}
+confirmCancel.onclick = () => confirmOverlay.classList.remove("open");
+confirmOk.onclick     = async () => {
+  confirmOverlay.classList.remove("open");
+  if (confirmCb) await confirmCb();
+  confirmCb = null;
+};
+
+/* ── Helpers ── */
+function esc(t = "") {
+  const d = document.createElement("div");
+  d.textContent = t;
+  return d.innerHTML;
+}
+function placeholder(t = "Producto") {
+  return `https://via.placeholder.com/100x100/f5f5f5/999?text=${encodeURIComponent(t)}`;
 }
 </script>
-
 </body>
 </html>
