@@ -54,7 +54,7 @@
     }
 
     .brand {
-      font-size: 1.15rem;
+      font-size: 1rem;
       font-weight: 900;
       color: var(--ml-text);
       white-space: nowrap;
@@ -415,9 +415,65 @@
   height: 18px;
   fill: #fff;
 }
+.share-float{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  width:58px;
+  height:58px;
+  border:none;
+  border-radius:50%;
+  background:#25d366;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  box-shadow:0 10px 25px rgba(0,0,0,.25);
+  z-index:120;
+  transition:transform .15s ease, background .15s ease, box-shadow .15s ease;
+}
+
+.share-float:hover{
+  background:#1faa52;
+  transform:scale(1.05);
+}
+
+.share-float:active{
+  transform:scale(.95);
+}
+
+.share-float svg{
+  width:24px;
+  height:24px;
+  fill:#fff;
+}
+
+@media (max-width:600px){
+  .share-float{
+    width:56px;
+    height:56px;
+    right:14px;
+    bottom:14px;
+  }
+}
+
+.indicacion{
+    color: #ffffff;
+    background-color: #000;
+    border-radius: 10px;
+    text-align: center;
+    padding: 10px;
+    margin: 6px;
+}
   </style>
 </head>
 <body>
+
+<button class="share-float" id="shareCatalogBtn" aria-label="Compartir catálogo">
+  <svg viewBox="0 0 24 24">
+    <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7a2.5 2.5 0 000-1.39l7-4.11A2.99 2.99 0 0018 7.91 3 3 0 1015 5a2.9 2.9 0 00.04.49l-7 4.12a3 3 0 100 4.78l7.05 4.14c-.03.15-.05.31-.05.47a3 3 0 103-2.92z"/>
+  </svg>
+</button>
 
 <!-- HEADER -->
 <header class="header">
@@ -431,17 +487,14 @@
   </button>
 </div>
 
-<button class="share-catalog-btn" id="shareCatalogBtn" aria-label="Compartir catálogo">
-  <svg viewBox="0 0 24 24">
-    <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7a2.5 2.5 0 000-1.39l7-4.11A2.99 2.99 0 0018 7.91 3 3 0 1015 5a2.9 2.9 0 00.04.49l-7 4.12a3 3 0 100 4.78l7.05 4.14c-.03.15-.05.31-.05.47a3 3 0 103-2.92z"/>
-  </svg>
-</button>
   </div>
 </header>
 
 <!-- MAIN -->
 <main class="main">
+  <div class="indicacion"><p>Ingresa a un producto y consulta por WhatsApp</p> </div>
   <div class="result-bar" id="resultBar"></div>
+
 
   <div id="loadingState" class="loading">
     <div class="spinner"></div>
