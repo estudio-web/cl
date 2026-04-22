@@ -672,6 +672,32 @@
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
+
+
+  .btn-share {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #25d366;
+  border: none;
+  border-radius: var(--radius);
+  padding: 7px 12px;
+  font-family: inherit;
+  font-size: .82rem;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+  transition: background .15s;
+}
+.btn-share:hover { background: #1faa52; }
+.btn-share svg { width: 16px; height: 16px; }
+
+@media (max-width: 520px) {
+  .btn-share span,
+  .btn-logout span {
+    display: none;
+  }
+}
 </style>
 </head>
 <body>
@@ -704,9 +730,16 @@
     <div class="header-brand">
       <span>🛍️</span> Admin Catálogo
     </div>
-    <button class="btn-logout" id="logoutBtn">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
-      Salir
+    <div style="display:flex;gap:8px;align-items:center;">
+  <button class="btn-share" id="shareCatalogBtn" title="Compartir catálogo">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7a2.5 2.5 0 000-1.39l7-4.11A2.99 2.99 0 0018 7.91 3 3 0 1015 5a2.9 2.9 0 00.04.49l-7 4.12a3 3 0 100 4.78l7.05 4.14c-.03.15-.05.31-.05.47a3 3 0 103-2.92z"/></svg>
+  <span>Compartir</span>
+</button>
+<button class="btn-logout" id="logoutBtn">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+  <span>Salir</span>
+</button>
+</div>
     </button>
   </header>
 
@@ -873,6 +906,7 @@ const confirmCancel = document.getElementById("confirmCancel");
 const confirmOk     = document.getElementById("confirmOk");
 const confirmTitle  = document.getElementById("confirmTitle");
 const confirmText   = document.getElementById("confirmText");
+const shareCatalogBtn = document.getElementById("shareCatalogBtn");
 
 /* ── State ── */
 let products = [];
@@ -897,11 +931,22 @@ loginPassword.addEventListener("keydown", e => {
 
 logoutBtn.onclick = () => signOut(auth);
 
+function shareCatalogOnWhatsApp() {
+  const catalogUrl = window.location.origin + window.location.pathname.replace("admin.html", "index.html");
+  const text = `Hola! Te comparto nuestro catálogo online:\n${catalogUrl}`;
+  const waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+  window.open(waUrl, "_blank");
+}
+
+shareCatalogBtn.onclick = shareCatalogOnWhatsApp;
+
 onAuthStateChanged(auth, user => {
   loginScreen.style.display = user ? "none"  : "flex";
   adminApp.style.display    = user ? "block" : "none";
   if (user) loginBtn.textContent = "Ingresar";
 });
+
+
 
 /* ── Render ── */
 function render() {
