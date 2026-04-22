@@ -49,7 +49,7 @@
       margin: 0 auto;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       height: 56px;
     }
 
@@ -66,6 +66,7 @@
       position: relative;
       display: flex;
       align-items: center;
+  min-width:0;
     }
 
     .search-input {
@@ -393,6 +394,27 @@
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
+
+    .share-catalog-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: #25d366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+  flex-shrink: 0;
+}
+.share-catalog-btn:hover { background: #1faa52; }
+.share-catalog-btn:active { transform: scale(.96); }
+.share-catalog-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: #fff;
+}
   </style>
 </head>
 <body>
@@ -401,12 +423,19 @@
 <header class="header">
   <div class="header-inner">
     <div class="brand">🛍️ NV-STORE</div>
+    
     <div class="search-wrap">
-      <input type="text" id="searchInput" class="search-input" placeholder="Buscar en el catálogo..." autocomplete="off" />
-      <button class="search-btn" aria-label="Buscar">
-        <svg viewBox="0 0 24 24"><path d="M10 2a8 8 0 105.293 14.121l4.293 4.293 1.414-1.414-4.293-4.293A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4z"/></svg>
-      </button>
-    </div>
+  <input type="text" id="searchInput" class="search-input" placeholder="Buscar en el catálogo..." autocomplete="off" />
+  <button class="search-btn" aria-label="Buscar">
+    <svg viewBox="0 0 24 24"><path d="M10 2a8 8 0 105.293 14.121l4.293 4.293 1.414-1.414-4.293-4.293A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4z"/></svg>
+  </button>
+</div>
+
+<button class="share-catalog-btn" id="shareCatalogBtn" aria-label="Compartir catálogo">
+  <svg viewBox="0 0 24 24">
+    <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7a2.5 2.5 0 000-1.39l7-4.11A2.99 2.99 0 0018 7.91 3 3 0 1015 5a2.9 2.9 0 00.04.49l-7 4.12a3 3 0 100 4.78l7.05 4.14c-.03.15-.05.31-.05.47a3 3 0 103-2.92z"/>
+  </svg>
+</button>
   </div>
 </header>
 
@@ -478,6 +507,7 @@
   const sheetDesc  = document.getElementById("sheetDesc");
   const sheetPrice = document.getElementById("sheetPrice");
   const btnWA      = document.getElementById("btnWA");
+  const shareCatalogBtn = document.getElementById("shareCatalogBtn");
 
   /* ─── State ─── */
   let allProducts = [];
@@ -491,6 +521,10 @@
   function placeholder(t = "Producto") {
     return `https://via.placeholder.com/700x700/f5f5f5/999?text=${encodeURIComponent(t)}`;
   }
+
+
+
+
 
   /* ─── Render grid ─── */
   function render(list) {
@@ -751,6 +785,35 @@
     const dy = touches[0].clientY - touches[1].clientY;
     return Math.sqrt(dx * dx + dy * dy);
   }
+
+
+shareCatalogBtn.addEventListener("click", shareCatalogOnWhatsApp);
+
+
+  async function shareCatalogOnWhatsApp() {
+  const isAdmin = window.location.pathname.includes("admin");
+  const catalogUrl = isAdmin
+    ? window.location.origin + window.location.pathname.replace("admin.html", "index.html")
+    : window.location.href;
+
+  const text = `Hola! Mirá nuestro catálogo online:\n${catalogUrl}`;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: "Catálogo",
+        text: "Mirá nuestro catálogo online",
+        url: catalogUrl
+      });
+      return;
+    } catch (e) {
+      console.log("Compartir cancelado o no disponible");
+    }
+  }
+
+  const waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+  window.open(waUrl, "_blank");
+}
 </script>
 </body>
 </html>
